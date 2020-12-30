@@ -3,6 +3,9 @@ import FeatherIcon from 'react-native-vector-icons/Feather';
 
 import { View } from 'react-native';
 
+// import AsyncStorage from '@react-native-community/async-storage';
+import FloatingCart from '../../components/FloatingCart';
+
 import {
   Container,
   ProductContainer,
@@ -18,6 +21,7 @@ import {
   ProductQuantity,
   ActionContainer,
   ActionButton,
+  // CleanButton,
   TotalProductsContainer,
   TotalProductsText,
   SubtotalValue,
@@ -39,23 +43,31 @@ const Cart: React.FC = () => {
   const { increment, decrement, products } = useCart();
 
   function handleIncrement(id: string): void {
-    // TODO
+    increment(id);
   }
 
   function handleDecrement(id: string): void {
-    // TODO
+    decrement(id);
   }
 
-  const cartTotal = useMemo(() => {
-    // TODO RETURN THE SUM OF THE QUANTITY OF THE PRODUCTS IN THE CART
+  // async function handleClean(): Promise<void> {
+  //   await AsyncStorage.removeItem('@GoMarketplace:products');
+  // }
 
-    return formatValue(0);
+  const cartTotal = useMemo(() => {
+    const totalValue = products.reduce((total, element) => {
+      const subTotal = element.quantity * element.price;
+      return total + subTotal;
+    }, 0);
+    return formatValue(totalValue);
   }, [products]);
 
   const totalItensInCart = useMemo(() => {
-    // TODO RETURN THE SUM OF THE QUANTITY OF THE PRODUCTS IN THE CART
+    const totalQuantity = products.reduce((total, element) => {
+      return total + element.quantity;
+    }, 0);
 
-    return 0;
+    return totalQuantity;
   }, [products]);
 
   return (
@@ -105,11 +117,15 @@ const Cart: React.FC = () => {
           )}
         />
       </ProductContainer>
+      {/* <CleanButton onPress={() => handleClean()}>
+        <FeatherIcon name="trash" color="#E83F5B" size={16} />
+      </CleanButton> */}
       <TotalProductsContainer>
         <FeatherIcon name="shopping-cart" color="#fff" size={24} />
         <TotalProductsText>{`${totalItensInCart} itens`}</TotalProductsText>
         <SubtotalValue>{cartTotal}</SubtotalValue>
       </TotalProductsContainer>
+      {/* <FloatingCart /> */}
     </Container>
   );
 };
